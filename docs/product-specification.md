@@ -1,0 +1,254 @@
+1. Product vision
+CRISP-DM connection: Business Understanding — define the problem, stakeholders, purpose, and measurable success before choosing a technical solution.
+
+Product name
+Problem statement
+Product vision
+Intended users and stakeholders
+Person or group	Need or responsibility	How the app helps
+Success criteria
+Write observable criteria. Avoid statements such as “the app is easy to use” unless you explain how you will recognize that.
+
+[ ]
+[ ]
+[ ]
+
+2. Product research and decisions
+CRISP-DM connection: Data Understanding — learn from existing products and inspect the patterns, assumptions, and constraints that shape the problem space.
+
+Complete this section from C04. Link or cite the tools you inspected.
+
+Tool	Pattern observed	Useful for this app?	Decision or implication
+Patterns to adopt
+Patterns to reject or simplify
+Product decisions
+Decision	Alternatives considered	Choice	Reason
+3. MVP scope
+CRISP-DM connection: Business Understanding → Data Understanding — decide which needs and product patterns belong in the first version and which do not.
+
+In scope
+[ ] Projects
+[ ] User stories
+[ ] Sprint board
+[ ] Sprint lifecycle
+[ ] Sprint reporting
+[ ] Velocity or progress tracking
+[ ] Other:
+Explicitly out of scope
+Deferred or optional ideas
+4. Key user workflows
+CRISP-DM connection: Business Understanding — describe how a stakeholder will accomplish a meaningful goal and what result would count as success.
+
+Describe the main things a user must be able to accomplish. Each workflow should end with an observable result.
+
+Workflow 1:
+Actor:
+Starting condition:
+Steps:
+
+Expected result:
+Failure or edge cases:
+
+Workflow 2:
+Actor:
+Starting condition:
+Steps:
+
+Expected result:
+Failure or edge cases:
+
+Workflow checklist
+[ ] Create and view a project
+[ ] Create and manage a user story
+[ ] Select a story for the current sprint
+[ ] Move a story through the workflow
+[ ] Close a sprint while preserving history
+[ ] Generate, review, and edit a sprint report
+[ ] View planned and completed work
+5. Functional requirements
+CRISP-DM connection: Business Understanding → Modeling — translate stakeholder needs into precise behavior that can later be designed, implemented, and tested.
+
+Write requirements as behavior, not implementation guesses. Use identifiers so tests and API endpoints can refer back to them.
+
+ID	Requirement	Priority	Related workflow	Acceptance evidence
+FR-01		Must		
+FR-02		Must		
+FR-03		Should		
+Workflow rules
+Document rules that an assistant might otherwise invent.
+
+Stories begin in Backlog.
+Moving a story to Selected for Sprint assigns it to the displayed sprint.
+The active board shows unassigned project backlog stories.
+Moving a story back to Backlog removes it from the active sprint while preserving closed-sprint history.
+Closing a sprint preserves its planned and completed story history.
+Additional rules:
+
+6. Domain model
+
+CRISP-DM connection: Data Understanding → Modeling — identify the information the product manages, its relationships, and the rules that govern it.
+
+The model should describe domain objects, relationships, and rules—not just screens.
+
+Entity: Project
+Purpose:
+Fields:
+- id —
+- name —
+- description —
+
+Relationships:
+Rules: Has sprints
+
+Entity: Task
+Purpose:
+Fields:
+- id —
+- project_id —
+- title —
+- description —
+- status —
+
+Relationships:
+Rules:
+
+Entity: Sprint
+Purpose:
+Fields:
+- id —
+- project_id —
+- goal —
+- status —
+- start
+- end
+
+Relationships:
+Rules: Has Stories
+
+Entity: SprintStory or equivalent association
+Purpose:
+Fields:
+Relationships:
+Rules:
+
+Entity: SprintReport
+Purpose:
+Fields:
+Relationships:
+Rules:
+
+
+OTHERS:
+user
+status?
+
+
+
+Domain questions to resolve
+What fields are required versus optional?
+Which fields are computed?
+Where is story status stored?
+Can a story belong to more than one sprint over time?
+What happens to unfinished stories when a sprint closes?
+Where is an AI-generated report draft saved?
+7. API contract
+CRISP-DM connection: Modeling — define the executable boundary between the product behavior, backend services, and future implementation.
+
+The backend API will be implemented with FastAPI. For each endpoint, specify the purpose, request, response, validation, errors, and related requirement.
+
+METHOD /path
+Purpose:
+Related requirement or workflow:
+
+Request body:
+
+{}
+Response body:
+
+{}
+Validation rules:
+
+Error cases:
+
+Endpoint checklist
+[ ] Project endpoints
+[ ] User story endpoints
+[ ] Sprint endpoints
+[ ] Sprint planning and closing endpoints
+[ ] Board transition behavior
+[ ] AI sprint-report draft endpoint
+8. AI sprint-report behavior
+CRISP-DM connection: Modeling → Evaluation — specify how project data becomes an AI-assisted product behavior and how people will check its quality.
+
+Inputs provided to the model
+Output sections
+Sprint goal
+Completed work
+Next sprint goals
+Blockers
+Faculty notes
+Missing or incomplete information
+What should the system do when the sprint has no blockers, no faculty notes, incomplete story data, or no completed work?
+
+Human review
+Explain how a person reviews and edits the draft before it is saved or used.
+
+AI failure cases to check
+[ ] Invented work or unsupported claims
+[ ] Missing completed or incomplete work
+[ ] Wrong sprint or project context
+[ ] Unhelpful output when information is missing
+9. Non-functional and platform requirements
+CRISP-DM connection: Modeling → Deployment — define the operational conditions that allow the system to run, integrate, and remain maintainable.
+
+Document the requirements that affect how the application is built and operated.
+
+[ ] FastAPI backend
+[ ] Persistent data storage
+[ ] Containerized local execution
+[ ] Environment-based configuration
+[ ] Automated tests
+[ ] Health endpoint
+[ ] Version information
+[ ] Structured logging
+[ ] Engineering documentation
+[ ] Course platform AI integration through the approved abstraction
+[ ] Authentication decision:
+Additional requirements or constraints:
+
+10. Risks, assumptions, and open questions
+CRISP-DM connection: Business Understanding → Evaluation — make uncertainty visible so it can be investigated rather than silently embedded in the implementation.
+
+Type	Statement	Impact	Next action or owner
+Assumption			
+Risk			
+Open question			
+11. Initial validation plan
+CRISP-DM connection: Evaluation — decide what evidence will show that the product behavior and engineering claims are credible.
+
+Requirement or workflow	Test or evidence	Expected result
+Identify the first behavior you will implement and verify in Class 5.
+
+First implementation slice:
+Why this slice:
+
+12. Decision log
+CRISP-DM connection: Improve — preserve the reasoning behind changes so later iterations can build on evidence instead of repeating old uncertainty.
+
+Link significant decisions to ADRs or record them briefly here.
+
+ID	Decision	Alternatives	Reason	Consequence
+ADR-001				
+AI review prompt
+AI review prompt — remove this section before submitting C06.
+
+After drafting this specification, ask an AI assistant to review it:
+
+Review this product specification for an Engineering Workflow application.
+Check whether it clearly supports projects, user stories, sprint board behavior,
+sprint lifecycle, sprint reporting, velocity tracking, and FastAPI implementation.
+Identify vague requirements, missing workflows, unclear domain relationships,
+contradictory rules, missing validation or error cases, and endpoint gaps.
+Do not rewrite the specification. Give specific review comments and identify
+which questions require a human product or engineering decision.
+You remain responsible for resolving the comments and approving the final specification.
