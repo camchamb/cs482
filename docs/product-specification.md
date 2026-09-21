@@ -69,19 +69,33 @@ CRISP-DM connection: Data Understanding — learn from existing products and ins
 # 3. MVP scope
 CRISP-DM connection: Business Understanding → Data Understanding — decide which needs and product patterns belong in the first version and which do not.
 
-In scope
-[ ] Projects
-[ ] User stories
-[ ] Sprint board
-[ ] Sprint lifecycle
-[ ] Sprint reporting
-[ ] Velocity or progress tracking
-[ ] Other:
-Explicitly out of scope
-Deferred or optional ideas
+## In Scope
+
+- [x] One project
+- [x] Tasks or ToDos
+- [x] Task titles, descriptions, and notes
+- [x] Assignment of tasks to team members
+- [x] Sprint board
+- [x] Task status tracking
+- [x] Sprint lifecycle, including closing sprints
+- [x] Persistent project, task, and sprint data
+
+## Explicitly Out of Scope
+
+- GitHub integration
+- Automatic task updates from GitHub
+- A complete record of all activity
+- Multiple views of tasks
+
+## Deferred or Optional Ideas
+
+- Multiple projects on the same account
+- Sharing data between people
+- AI-generated sprint reports
+- Sprint statistics and velocity or progress metrics
 
 
-4. Key user workflows
+# 4. Key user workflows
 CRISP-DM connection: Business Understanding — describe how a stakeholder will accomplish a meaningful goal and what result would count as success.
 
 Describe the main things a user must be able to accomplish. Each workflow should end with an observable result.
