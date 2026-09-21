@@ -32,13 +32,38 @@ The criteria below are observable and testable.
 # 2. Product research and decisions
 CRISP-DM connection: Data Understanding — learn from existing products and inspect the patterns, assumptions, and constraints that shape the problem space.
 
-Complete this section from C04. Link or cite the tools you inspected.
+## Tools Reviewed
 
-Tool	Pattern observed	Useful for this app?	Decision or implication
-Patterns to adopt
-Patterns to reject or simplify
-Product decisions
-Decision	Alternatives considered	Choice	Reason
+| Tool | Pattern Observed | Useful for This App? | Decision or Implication |
+| --- | --- | --- | --- |
+| [GitHub Projects](https://github.com/features/issues) | Work is displayed as task cards in status columns. Cards can contain titles, descriptions, and issue details, and automation can move them when linked work changes. | Partly | Adopt the board, task-card, and status-column patterns. Do not require GitHub integration or automatic status changes. |
+| [Jira](https://www.atlassian.com/software/jira) | Tasks can be assigned, dragged between status columns, associated with a sprint, and opened to edit details. When a sprint closes, unfinished tasks can move to another sprint. | Yes, with simplification | Adopt task assignment, drag-and-drop status changes, editable details, and sprint closing. Exclude Jira's extensive metrics, activity history, and alternate views from the MVP. |
+
+## Patterns to Adopt
+
+- Display current work as task cards on a board organized by status.
+- Show each task's title and current stage at a glance.
+- Allow users to open a task to view and edit its description, notes, decisions, and assignment.
+- Allow tasks to move between statuses as work progresses.
+- Preserve unfinished work when a sprint closes so it can be carried into a later sprint.
+
+## Patterns to Reject or Simplify
+
+- Do not connect tasks to GitHub issues or use GitHub events to change task status automatically.
+- Do not include detailed sprint statistics, insights, or velocity metrics in the MVP.
+- Do not maintain a complete activity log of every change.
+- Do not provide multiple task views; the sprint board is the primary view.
+- Keep task details visible as text instead of relying mainly on icons and dropdown menus.
+
+## Product Decisions
+
+| Decision | Alternatives Considered | Choice | Reason |
+| --- | --- | --- | --- |
+| Primary task view | Board, list, or multiple interchangeable views | Use one status-based sprint board | Both reviewed tools make work and task status easy to understand through columns, while one view keeps the MVP focused. |
+| Task movement | Manual movement or automatic updates from GitHub | Let users move tasks between statuses manually | Manual movement provides the needed workflow without adding GitHub integration. |
+| Task information | Title only, summary fields on every card, or editable task details | Show a concise card and provide editable descriptions, notes, decisions, and assignments | This keeps the board readable while retaining the context the team needs. |
+| Sprint completion | Delete the board, leave unfinished tasks in a closed sprint, or carry them forward | Preserve the closed sprint and allow unfinished tasks to move to a later sprint | Teams need both historical sprint information and a clear way to continue incomplete work. |
+| Progress reporting | Detailed metrics and activity history or basic board status | Use board status as the MVP's progress indicator | The research identified status visibility as useful, but extensive statistics and activity records as unnecessary. |
 
 
 # 3. MVP scope
