@@ -115,7 +115,7 @@ Describe the main things a user must be able to accomplish. Each workflow should
 
 **Expected result:** The new project is saved and can be opened independently from the existing project.
 
-**Failure or edge cases:** Required project fields and validation rules have not yet been defined.
+**Failure or edge cases:** A project cannot be saved without a name. Its description is optional.
 
 ## Workflow 2: Create and Manage a Task
 
@@ -132,7 +132,7 @@ Describe the main things a user must be able to accomplish. Each workflow should
 
 **Expected result:** The task is saved in the selected project, assigned to the selected team member, and begins in `To Do`.
 
-**Failure or edge cases:** Required task fields and validation rules have not yet been defined.
+**Failure or edge cases:** A task cannot be saved without a title. Its description, notes, and assignee are optional.
 
 ## Workflow 3: Move a Task Through the Sprint Board
 
@@ -148,7 +148,7 @@ Describe the main things a user must be able to accomplish. Each workflow should
 
 **Expected result:** The sprint board displays the task in its current status: `To Do`, `In progress`, `In Review`, or `Done`.
 
-**Failure or edge cases:** Rules for moving a task backward to an earlier status have not yet been defined.
+**Failure or edge cases:** The user can move a task directly from any status to any other status.
 
 ## Workflow 4: Close a Sprint
 
@@ -160,9 +160,11 @@ Describe the main things a user must be able to accomplish. Each workflow should
 
 1. The user closes the current sprint.
 2. The application preserves the sprint's planned and completed task history.
-3. The application automatically moves unfinished tasks to the next sprint.
+3. The application generates the next sprint and displays its information in a pop-up.
+4. The user reviews and adjusts the new sprint's information.
+5. The application automatically moves unfinished tasks to the new sprint.
 
-**Expected result:** The closed sprint remains available as history, completed tasks remain recorded in it, and unfinished tasks appear in the next sprint.
+**Expected result:** The closed sprint remains available as history, completed tasks remain recorded in it, and unfinished tasks appear in the generated next sprint with the user-adjusted sprint information.
 
 **Failure or edge cases:** If there are no unfinished tasks, no tasks are carried into the next sprint.
 
@@ -181,18 +183,30 @@ CRISP-DM connection: Business Understanding → Modeling — translate stakehold
 
 Write requirements as behavior, not implementation guesses. Use identifiers so tests and API endpoints can refer back to them.
 
-ID	Requirement	Priority	Related workflow	Acceptance evidence
-FR-01		Must		
-FR-02		Must		
-FR-03		Should		
-Workflow rules
-Document rules that an assistant might otherwise invent.
+| ID | Requirement | Priority | Related Workflow | Acceptance Evidence |
+| --- | --- | --- | --- | --- |
+| FR-01 | The application must open with an existing project available to view. | Must | Workflow 1 | On startup, the user can open and view the existing project. |
+| FR-02 | The user must be able to create and open multiple projects. | Must | Workflow 1 | A newly created project is saved and can be opened independently from other projects. |
+| FR-03 | A project must have a name. Its description is optional. | Must | Workflow 1 | A project with a name can be saved; a project without a name cannot be saved. |
+| FR-04 | The user must be able to create a task in an opened project and later view or edit it. | Must | Workflow 2 | The saved task appears in the selected project, and edits remain visible when it is reopened. |
+| FR-05 | A task must have a title. Its description, notes, and assignee are optional. | Must | Workflow 2 | A task with a title can be saved; a task without a title cannot be saved. |
+| FR-06 | A newly created task must begin with the `To Do` status. | Must | Workflows 2 and 3 | After creation, the task appears in the `To Do` column. |
+| FR-07 | The user must be able to move a task from any status directly to any other status. | Must | Workflow 3 | A task can move among `To Do`, `In progress`, `In Review`, and `Done` without a required sequence. |
+| FR-08 | Closing a sprint must preserve its planned and completed task history. | Must | Workflow 4 | After the sprint closes, its planned tasks and completed tasks remain available for review. |
+| FR-09 | When a sprint closes, the application must generate the next sprint and display its information in a pop-up for the user to adjust. | Must | Workflow 4 | Closing a sprint displays editable information for the generated next sprint. |
+| FR-10 | When a sprint closes, the application must automatically move unfinished tasks to the generated next sprint. | Must | Workflow 4 | Tasks not marked `Done` appear in the generated next sprint; completed tasks remain in the closed sprint history. |
+| FR-11 | The application must persist project, task, and sprint data. | Must | Workflows 1–4 | Saved projects, tasks, task statuses, assignments, and sprint history remain available after the application is restarted. |
 
-Tasks begin in To Do.
-The task statuses are To Do, In progress, In Review, and Done.
-Closing a sprint preserves its planned and completed task history.
-Unfinished tasks move to the next sprint automatically when the current sprint closes.
-Additional rules:
+## Workflow Rules
+
+- Projects require a name; descriptions are optional.
+- Tasks require a title; descriptions, notes, and assignees are optional.
+- New tasks begin in `To Do`.
+- The task statuses are `To Do`, `In progress`, `In Review`, and `Done`.
+- Users can move tasks directly from any status to any other status.
+- Closing a sprint preserves its planned and completed task history.
+- Closing a sprint generates the next sprint and allows the user to adjust its information in a pop-up.
+- Unfinished tasks move to the generated next sprint automatically.
 
 # 6. Domain model
 
