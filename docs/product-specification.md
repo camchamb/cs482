@@ -1,19 +1,35 @@
-1. Product vision
+# 1. Product vision
 CRISP-DM connection: Business Understanding — define the problem, stakeholders, purpose, and measurable success before choosing a technical solution.
 
-Product name
-Problem statement
-Product vision
-Intended users and stakeholders
-Person or group	Need or responsibility	How the app helps
-Success criteria
-Write observable criteria. Avoid statements such as “the app is easy to use” unless you explain how you will recognize that.
+## Product Name
 
-[ ]
-[ ]
-[ ]
+CS482 Workflow
 
-2. Product research and decisions
+## Problem Statement
+
+Students need a simple way to track project tasks across sprint stages, see what still needs work, and preserve sprint progress without relying on heavyweight tools or GitHub integrations that are unnecessary for the CS 482 MVP.
+
+## Product Vision
+
+A lightweight sprint-management application for CS 482 that helps teams organize tasks, move work through a clear board workflow, and close sprints with persistent history.
+
+## Intended Users and Stakeholders
+
+| Person or Group | Need or Responsibility | How the App Helps |
+| --- | --- | --- |
+| CS 482 student team members | Create tasks, track task status, and manage sprint work | Provides a board with task status, notes, and descriptions so team members can see what to work on and what stage each task is in. |
+| Project teams | Coordinate shared sprint progress and close sprints cleanly | Keeps sprint tasks in one place, supports moving tasks through workflow stages, and preserves data when a sprint closes. |
+| Course staff or instructors | Review evidence of project progress and sprint outcomes | Makes project work and sprint status visible through persistent task and sprint records. |
+
+## Success Criteria
+
+The criteria below are observable and testable.
+
+- [ ] A team can create tasks with a title, description, and notes, then move them between workflow statuses on a sprint board.
+- [ ] The current board clearly shows which tasks still need work and what status each task is in.
+- [ ] Closing a sprint preserves the sprint's task information so the team can review completed and incomplete work later.
+
+# 2. Product research and decisions
 CRISP-DM connection: Data Understanding — learn from existing products and inspect the patterns, assumptions, and constraints that shape the problem space.
 
 Complete this section from C04. Link or cite the tools you inspected.
@@ -23,7 +39,9 @@ Patterns to adopt
 Patterns to reject or simplify
 Product decisions
 Decision	Alternatives considered	Choice	Reason
-3. MVP scope
+
+
+# 3. MVP scope
 CRISP-DM connection: Business Understanding → Data Understanding — decide which needs and product patterns belong in the first version and which do not.
 
 In scope
@@ -36,6 +54,8 @@ In scope
 [ ] Other:
 Explicitly out of scope
 Deferred or optional ideas
+
+
 4. Key user workflows
 CRISP-DM connection: Business Understanding — describe how a stakeholder will accomplish a meaningful goal and what result would count as success.
 
