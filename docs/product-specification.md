@@ -334,29 +334,329 @@ Rules: Authentication and cross-user sharing are deferred. For the MVP, a user r
 # 7. API contract
 CRISP-DM connection: Modeling — define the executable boundary between the product behavior, backend services, and future implementation.
 
-The backend API will be implemented with FastAPI. For each endpoint, specify the purpose, request, response, validation, errors, and related requirement.
+The backend API will be implemented with **FastAPI**. This contract covers project, task, sprint, sprint-planning, sprint-closing, board-transition, and AI sprint-report draft endpoints. In this API, `task` is the product term for the work-item entity referred to as a “story” in the assignment requirements.
 
-METHOD /path
-Purpose:
-Related requirement or workflow:
+All identifiers are system-generated strings. Responses use JSON. `PUT` requests provide the complete editable representation of an existing resource; `POST` creates a resource or performs a lifecycle action. Timestamps are ISO 8601 date-time values. Unless otherwise stated, an unknown resource returns `404 Not Found`, invalid request data returns `422 Unprocessable Entity`, and a conflicting lifecycle state returns `409 Conflict`.
 
-Request body:
+## Projects
 
-{}
-Response body:
+### POST /projects
+**Purpose:** Create an independently managed project.
 
-{}
-Validation rules:
+**Related requirement or workflow:** FR-01, FR-03; Workflow 1.
 
-Error cases:
+**Request body:**
+```json
+{ "name": "CS482 Workflow", "description": "Engineering workflow application" }
+```
+
+**Response body (`201 Created`):**
+```json
+{ "id": "project_123", "name": "CS482 Workflow", "description": "Engineering workflow application", "current_sprint_id": null }
+```
+
+**Validation rules:** `name` is required and cannot be blank. `description` is optional.
+
+**Error cases:** A missing or blank name returns `422`.
+
+### GET /projects
+**Purpose:** List the projects available to the user.
+
+**Related requirement or workflow:** FR-02; Workflow 1.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "projects": [{ "id": "project_123", "name": "CS482 Workflow", "description": "Engineering workflow application", "current_sprint_id": "sprint_123" }] }
+```
+
+**Validation rules:** None.
+
+**Error cases:** None expected for an empty collection; return `{ "projects": [] }`.
+
+### GET /projects/{project_id}
+**Purpose:** Retrieve a project summary, including its current sprint and progress summary.
+
+**Related requirement or workflow:** FR-01, FR-02; Workflow 1.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "id": "project_123", "name": "CS482 Workflow", "description": "Engineering workflow application", "current_sprint": { "id": "sprint_123", "name": "Sprint 1", "goal": "Complete the workflow", "status": "Current" }, "progress": { "backlog_tasks": 3, "selected_tasks": 2, "in_progress_tasks": 1, "done_tasks": 4 } }
+```
+
+**Validation rules:** `project_id` must identify an existing project.
+
+**Error cases:** An unknown project returns `404`.
+
+### PUT /projects/{project_id}
+**Purpose:** Replace a project’s editable information.
+
+**Related requirement or workflow:** FR-02, FR-03; Workflow 1.
+
+**Request body:**
+```json
+{ "name": "CS482 Workflow", "description": "Updated project description" }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "id": "project_123", "name": "CS482 Workflow", "description": "Updated project description", "current_sprint_id": "sprint_123" }
+```
+
+**Validation rules:** `name` is required and cannot be blank; `description` may be empty or omitted according to the FastAPI request model.
+
+**Error cases:** An unknown project returns `404`; a missing or blank name returns `422`.
+
+## Tasks
+
+### POST /projects/{project_id}/tasks
+**Purpose:** Create a task in a project’s backlog.
+
+**Related requirement or workflow:** FR-04 through FR-06; Workflow 2.
+
+**Request body:**
+```json
+{ "title": "Create sprint board", "description": "Show all workflow columns", "assignee_id": "user_123", "priority": "High", "blocker_notes": null, "dependency_notes": null, "acceptance_evidence": null, "task_points": 3, "acceptance_criteria": "Board displays all statuses", "definition_of_done": "Reviewed by team" }
+```
+
+**Response body (`201 Created`):**
+```json
+{ "id": "task_123", "project_id": "project_123", "title": "Create sprint board", "status": "Backlog", "sprint_id": null, "task_points": 3 }
+```
+
+**Validation rules:** The project must exist. `title` is required and cannot be blank. All planning-detail fields are optional. The server always assigns `Backlog` as the initial status and ignores any client-supplied initial status.
+
+**Error cases:** An unknown project returns `404`; a missing or blank title returns `422`.
+
+### GET /projects/{project_id}/tasks
+**Purpose:** List a project’s tasks, optionally filtered by current status or sprint.
+
+**Related requirement or workflow:** FR-04, FR-08; Workflows 2 and 3.
+
+**Request body:** None. Optional query parameters are `status` and `sprint_id`.
+
+**Response body (`200 OK`):**
+```json
+{ "tasks": [{ "id": "task_123", "project_id": "project_123", "title": "Create sprint board", "status": "In Progress", "sprint_id": "sprint_123", "task_points": 3 }] }
+```
+
+**Validation rules:** The project must exist. If supplied, `status` must be a configured workflow status and `sprint_id` must belong to the project.
+
+**Error cases:** An unknown project or sprint returns `404`; an invalid status filter returns `422`.
+
+### GET /tasks/{task_id}
+**Purpose:** Retrieve all details of one task.
+
+**Related requirement or workflow:** FR-04, FR-05; Workflow 2.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "id": "task_123", "project_id": "project_123", "title": "Create sprint board", "description": "Show all workflow columns", "assignee_id": "user_123", "priority": "High", "blocker_notes": null, "dependency_notes": null, "acceptance_evidence": null, "task_points": 3, "acceptance_criteria": "Board displays all statuses", "definition_of_done": "Reviewed by team", "status": "In Progress", "sprint_id": "sprint_123" }
+```
+
+**Validation rules:** `task_id` must identify an existing task.
+
+**Error cases:** An unknown task returns `404`.
+
+### PUT /tasks/{task_id}
+**Purpose:** Replace a task’s editable details without changing sprint membership or board position.
+
+**Related requirement or workflow:** FR-04, FR-05; Workflow 2.
+
+**Request body:**
+```json
+{ "title": "Create sprint board", "description": "Show all workflow columns", "assignee_id": "user_123", "priority": "High", "blocker_notes": "Awaiting design decision", "dependency_notes": null, "acceptance_evidence": null, "task_points": 3, "acceptance_criteria": "Board displays all statuses", "definition_of_done": "Reviewed by team" }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "id": "task_123", "project_id": "project_123", "title": "Create sprint board", "status": "In Progress", "sprint_id": "sprint_123", "blocker_notes": "Awaiting design decision" }
+```
+
+**Validation rules:** `title` is required and cannot be blank. Optional references, such as `assignee_id`, must be valid project members when membership is implemented. Status and sprint membership can be changed only through the board-transition endpoint.
+
+**Error cases:** An unknown task returns `404`; a missing or blank title, an invalid field type, or an attempt to update `status` or `sprint_id` returns `422`.
+
+## Sprints
+
+### POST /projects/{project_id}/sprints
+**Purpose:** Create a sprint for a project.
+
+**Related requirement or workflow:** FR-10; Workflow 4.
+
+**Request body:**
+```json
+{ "name": "Sprint 1", "goal": "Complete core workflow", "start_date": "2026-10-01", "end_date": "2026-10-14" }
+```
+
+**Response body (`201 Created`):**
+```json
+{ "id": "sprint_123", "project_id": "project_123", "name": "Sprint 1", "goal": "Complete core workflow", "status": "Current", "start_date": "2026-10-01", "end_date": "2026-10-14", "closed_at": null, "planned_work": 0, "completed_work": 0, "velocity": 0 }
+```
+
+**Validation rules:** The project must exist. `name`, `start_date`, and `end_date` are required. `end_date` must be on or after `start_date`. A project can have at most one current sprint.
+
+**Error cases:** An unknown project returns `404`; missing required fields or invalid dates return `422`; creating a second current sprint returns `409`.
+
+### GET /projects/{project_id}/sprints
+**Purpose:** List current and closed sprints for a project.
+
+**Related requirement or workflow:** FR-10, FR-11; Workflow 4.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "sprints": [{ "id": "sprint_123", "name": "Sprint 1", "status": "Closed", "planned_work": 5, "completed_work": 4, "velocity": 4 }] }
+```
+
+**Validation rules:** The project must exist.
+
+**Error cases:** An unknown project returns `404`; an empty collection returns `{ "sprints": [] }`.
+
+### GET /sprints/{sprint_id}
+**Purpose:** Retrieve a sprint, its dates, lifecycle state, and calculated work metrics.
+
+**Related requirement or workflow:** FR-10, FR-11; Workflow 4.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "id": "sprint_123", "project_id": "project_123", "name": "Sprint 1", "goal": "Complete core workflow", "status": "Closed", "start_date": "2026-10-01", "end_date": "2026-10-14", "closed_at": "2026-10-14T17:00:00Z", "planned_work": 5, "completed_work": 4, "velocity": 4 }
+```
+
+**Validation rules:** `sprint_id` must identify an existing sprint.
+
+**Error cases:** An unknown sprint returns `404`.
+
+### PUT /sprints/{sprint_id}
+**Purpose:** Replace the editable information of a current sprint.
+
+**Related requirement or workflow:** FR-10; Workflow 4.
+
+**Request body:**
+```json
+{ "name": "Sprint 1", "goal": "Complete core workflow", "start_date": "2026-10-01", "end_date": "2026-10-14" }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "id": "sprint_123", "project_id": "project_123", "name": "Sprint 1", "goal": "Complete core workflow", "status": "Current", "start_date": "2026-10-01", "end_date": "2026-10-14" }
+```
+
+**Validation rules:** `name`, `start_date`, and `end_date` are required; `end_date` cannot precede `start_date`. Only a current sprint is editable.
+
+**Error cases:** An unknown sprint returns `404`; invalid data returns `422`; editing a closed sprint returns `409`.
+
+## Sprint planning, board, and closing
+
+### POST /sprints/{sprint_id}/plan
+**Purpose:** Add selected project-backlog tasks to a current sprint in the `Selected for Sprint` column.
+
+**Related requirement or workflow:** FR-08, FR-10; Workflow 3.
+
+**Request body:**
+```json
+{ "task_ids": ["task_123", "task_456"] }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "sprint_id": "sprint_123", "planned_tasks": [{ "task_id": "task_123", "status": "Selected for Sprint" }, { "task_id": "task_456", "status": "Selected for Sprint" }], "planned_work": 2 }
+```
+
+**Validation rules:** The sprint must be current. Every task must exist, belong to the sprint’s project, be unassigned to an active sprint, and have `Backlog` status. Duplicate task IDs are not allowed.
+
+**Error cases:** An unknown sprint or task returns `404`; attempting to plan a task from another project, a task already in an active sprint, a non-backlog task, or planning into a closed sprint returns `409`; an empty or duplicate task list returns `422`.
+
+### GET /sprints/{sprint_id}/board
+**Purpose:** Retrieve one sprint board. Its columns are `Backlog`, `Selected for Sprint`, `In Progress`, and `Done`; `Backlog` includes unassigned project tasks visible while viewing this sprint.
+
+**Related requirement or workflow:** FR-07 through FR-09; Workflow 3.
+
+**Request body:** None.
+
+**Response body (`200 OK`):**
+```json
+{ "sprint_id": "sprint_123", "project_id": "project_123", "columns": { "Backlog": [{ "id": "task_999", "title": "Write tests", "status": "Backlog" }], "Selected for Sprint": [{ "id": "task_123", "title": "Create sprint board", "status": "Selected for Sprint" }], "In Progress": [], "Done": [] } }
+```
+
+**Validation rules:** The sprint must exist. A closed sprint returns its preserved board entries and final statuses; it does not add current project-backlog tasks to historical results.
+
+**Error cases:** An unknown sprint returns `404`.
+
+### PUT /sprints/{sprint_id}/board/tasks/{task_id}
+**Purpose:** Set a task’s column on the identified sprint’s single board. The `sprint_id` identifies the board; its workflow columns are statuses, not separate boards.
+
+**Related requirement or workflow:** FR-06 through FR-09; Workflow 3.
+
+**Request body:**
+```json
+{ "target_status": "In Progress" }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "task_id": "task_123", "sprint_id": "sprint_123", "previous_status": "Selected for Sprint", "status": "In Progress", "sprint_membership": "Active" }
+```
+
+**Validation rules:** The sprint must be current and the task must belong to its project. `target_status` must be a configured workflow status. A `Backlog` task moved to `Selected for Sprint` creates its active board entry. A task already on this board may move directly among `Selected for Sprint`, `In Progress`, and `Done`. Moving a task to `Backlog` removes its active-sprint entry and sets its current status to `Backlog`; closed-sprint snapshots remain unchanged.
+
+**Error cases:** An unknown sprint or task returns `404`; a closed sprint returns `409`; a task from another project, a non-backlog task not assigned to this sprint, or an invalid target status returns `422`.
+
+### POST /sprints/{sprint_id}/close
+**Purpose:** Close a current sprint, preserve task-status snapshots, calculate planned work, completed work, and velocity, and optionally create a next sprint with selected unfinished tasks carried forward.
+
+**Related requirement or workflow:** FR-11; Workflow 4.
+
+**Request body:**
+```json
+{ "create_next_sprint": true, "next_sprint": { "name": "Sprint 2", "goal": "Complete integration", "start_date": "2026-10-15", "end_date": "2026-10-28" }, "carry_forward_task_ids": ["task_456"] }
+```
+
+**Response body (`200 OK`):**
+```json
+{ "closed_sprint": { "id": "sprint_123", "status": "Closed", "closed_at": "2026-10-14T17:00:00Z", "planned_work": 5, "completed_work": 4, "velocity": 4, "task_snapshots": [{ "task_id": "task_123", "final_status": "Done" }, { "task_id": "task_456", "final_status": "In Progress" }] }, "next_sprint": { "id": "sprint_124", "status": "Current", "carried_forward_task_ids": ["task_456"] } }
+```
+
+**Validation rules:** The sprint must be current. The server snapshots every board entry and calculates metrics before changing the sprint to `Closed`. `carry_forward_task_ids` may include only unfinished tasks from this sprint and requires `create_next_sprint: true`. If a next sprint is created, its name and dates are required and it must not overlap invalidly with its own dates.
+
+**Error cases:** An unknown sprint returns `404`; closing an already closed sprint or creating a next sprint when another current sprint exists returns `409`; invalid next-sprint dates, attempting to carry a completed/non-member task, or omitting required next-sprint fields returns `422`.
+
+## AI sprint-report draft
+
+### POST /sprints/{sprint_id}/report-drafts
+**Purpose:** Generate and persist an editable AI-assisted sprint-report draft from the sprint’s goal, task details, board history, validation evidence, blockers, dependencies, and computed outcomes.
+
+**Related requirement or workflow:** FR-12; Workflow 5.
+
+**Request body:**
+```json
+{ "report_type": "Closed Sprint" }
+```
+
+**Response body (`201 Created`):**
+```json
+{ "id": "report_123", "sprint_id": "sprint_123", "report_type": "Closed Sprint", "status": "Draft", "sprint_goal": "Complete core workflow", "deliveries_and_validation_evidence": "Drafted from completed tasks and recorded evidence.", "next_sprint_goals": "Drafted from unfinished work and sprint context.", "key_decisions_and_blockers": "Drafted from recorded task notes.", "faculty_questions": "No faculty questions were recorded.", "draft_content": "...", "generation_context": { "sprint_id": "sprint_123", "source": "sprint board and task records" }, "created_at": "2026-10-14T17:05:00Z" }
+```
+
+**Validation rules:** `report_type` must be either `Closed Sprint` or `Mid-Sprint Status`. A `Closed Sprint` report requires a closed sprint; a `Mid-Sprint Status` report requires the current sprint. The API saves generated output only as `Draft`; it must preserve generation context and identify missing information rather than inventing unsupported work or claims.
+
+**Error cases:** An unknown sprint returns `404`; an invalid report type or report type incompatible with the sprint lifecycle state returns `422`; an unavailable AI service or generation failure returns `503 Service Unavailable` without saving a fabricated or partial final report.
 
 Endpoint checklist
-[ ] Project endpoints
-[ ] Task endpoints
-[ ] Sprint endpoints
-[ ] Sprint planning and closing endpoints
-[ ] Board transition behavior
-[ ] AI sprint-report draft endpoint
+- [x] Project endpoints
+- [x] Task endpoints (the assignment’s “story” endpoints)
+- [x] Sprint endpoints
+- [x] Sprint planning and closing endpoints
+- [x] Board transition behavior
+- [x] AI sprint-report draft endpoint
 
 # 8. AI sprint-report behavior
 CRISP-DM connection: Modeling → Evaluation — specify how project data becomes an AI-assisted product behavior and how people will check its quality.
