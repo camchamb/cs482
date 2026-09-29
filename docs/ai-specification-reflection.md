@@ -1,0 +1,1 @@
+I thought that it was a really good process using an AI. It did most of the writing, but I was able to critic and tell it to change things. It was hard to get the formating correct at first. I learned that using AI is a process and I need to guide it along. 

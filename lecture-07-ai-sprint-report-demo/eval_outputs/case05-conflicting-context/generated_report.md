@@ -1,0 +1,17 @@
+- Team name: Roadmap Rangers  
+- Report date: Nov 19  
+- Sprint Goal: Add roadmap timeline and readiness review export.  
+- Velocity Trend:  
+  - Sprint N: Planned 8, Completed 4, Percentage 50%  
+  - Sprint N-1: Planned 6, Completed 3, Percentage 50%  
+  - Sprint N-2: Missing from provided context.  
+- Sprint Deliveries & Validation:  
+  - Create roadmap timeline view: Confirmed three milestones appeared in chronological order.  
+- Key Decisions / Blockers:  
+  - Use a timeline-first presentation for sponsor readiness.  
+  - Export currently omits risk notes.  
+- Next Sprint Goals:  
+  - Finish readiness review export.  
+  - Add risk notes to exported outlines.  
+- Faculty Feedback / Requests:  
+  - Should the readiness review export include detailed risks or only a summary?

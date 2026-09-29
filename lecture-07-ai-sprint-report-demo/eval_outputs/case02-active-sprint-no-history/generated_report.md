@@ -1,0 +1,11 @@
+- Team name: Sprint Founders  
+- Report date: Sep 24  
+- Sprint Goal: Create the initial sponsor intake workflow.  
+- Velocity Trend:  
+  Sprint N: Planned 4, Completed —, Percentage —  
+- Sprint Deliveries & Validation: Missing from provided context.  
+- Key Decisions / Blockers: Start with one shared workspace before adding team-specific views.  
+- Next Sprint Goals:  
+  - Build the sponsor intake form.  
+  - Create a project summary view.  
+- Faculty Feedback / Requests: Are these first sprint goals narrow enough?
