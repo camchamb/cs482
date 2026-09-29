@@ -1,0 +1,33 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, staging]
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.dockerignore'
+  pull_request:
+    branches: [main, staging]
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.dockerignore'
+
+jobs:
+  # Unit tests on every push and PR. GitHub-hosted runner.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r hello_svc/requirements-dev.txt
+
+      - name: Unit tests
+        run: pytest tests/ -v --cov=hello_svc --cov-report=term-missing --cov-fail-under=90
